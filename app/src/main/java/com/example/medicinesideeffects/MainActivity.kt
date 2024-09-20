@@ -2,6 +2,7 @@ package com.example.medicinesideeffects
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
@@ -11,22 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var etSearch: EditText
     private lateinit var btnSearch: Button
     private lateinit var lvMedicineList: ListView
-
-    private val medicines = listOf(
-        Medicine("Аспирин", listOf(
-            SideEffect("Тошнота", "Ощущение тошноты", "Часто"),
-            SideEffect("Головная боль", "Болезненное ощущение в голове", "Редко")
-        )),
-        Medicine("Парацетамол", listOf(
-            SideEffect("Аллергическая реакция", "Крапивница, отек", "Редко"),
-            SideEffect("Потеря аппетита", "Снижение желания есть", "Редко")
-        ))
-    )
+    private lateinit var medicines: List<Medicine>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +28,16 @@ class MainActivity : AppCompatActivity() {
         btnSearch = findViewById(R.id.btnSearch)
         lvMedicineList = findViewById(R.id.lvMedicineList)
 
+        Log.d("MainActivity", "onCreate called")
+
+        // Загрузка данных из JSON
+        medicines = DataGenerator.getMedicines(this)
+
         btnSearch.setOnClickListener {
             val query = etSearch.text.toString()
+            Log.d("MainActivity", "Search query: $query")
             val filteredMedicines = medicines.filter { it.name.contains(query, ignoreCase = true) }
+            Log.d("MainActivity", "Filtered medicines: ${filteredMedicines.size}")
             lvMedicineList.adapter = MedicineAdapter(this, filteredMedicines)
         }
 
