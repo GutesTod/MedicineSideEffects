@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-class MedicineAdapter(private val context: Context, private val medicines: List<Medicine>) : BaseAdapter() {
+class MedicineAdapter(private val context: Context, private var medicines: List<Medicine>) : BaseAdapter() {
 
     override fun getCount(): Int {
         return medicines.size
@@ -28,5 +28,10 @@ class MedicineAdapter(private val context: Context, private val medicines: List<
         view.findViewById<TextView>(R.id.tvMedicineName).text = medicine.name
 
         return view
+    }
+
+    fun updateData(newMedicines: List<Medicine>) {
+        medicines = newMedicines
+        notifyDataSetChanged()
     }
 }

@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnSearch: Button
     private lateinit var lvMedicineList: ListView
     private lateinit var medicines: List<Medicine>
+    private lateinit var adapter: MedicineAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,16 +34,22 @@ class MainActivity : AppCompatActivity() {
         // Загрузка данных из JSON
         medicines = DataGenerator.getMedicines(this)
 
+        // Инициализация адаптера с пустым списком
+        adapter = MedicineAdapter(this, emptyList())
+        lvMedicineList.adapter = adapter
+
         btnSearch.setOnClickListener {
             val query = etSearch.text.toString()
             Log.d("MainActivity", "Search query: $query")
             val filteredMedicines = medicines.filter { it.name.contains(query, ignoreCase = true) }
             Log.d("MainActivity", "Filtered medicines: ${filteredMedicines.size}")
-            lvMedicineList.adapter = MedicineAdapter(this, filteredMedicines)
+
+            // Обновление адаптера с новыми отфильтрованными данными
+            adapter.updateData(filteredMedicines)
         }
 
         lvMedicineList.setOnItemClickListener { _, _, position, _ ->
-            val selectedMedicine = lvMedicineList.adapter.getItem(position) as Medicine
+            val selectedMedicine = adapter.getItem(position) as Medicine
             showSideEffectsDialog(selectedMedicine)
         }
     }
